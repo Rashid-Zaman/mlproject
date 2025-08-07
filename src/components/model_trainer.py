@@ -42,13 +42,57 @@ class ModelTrainer:
                 "AdaBoost":AdaBoostRegressor(),
                 "GradientBoost":GradientBoostingRegressor(),
                 "DecisionTree":DecisionTreeRegressor(),
-                "Linear Regression":LinearRegression(),
+                "LinearRegression":LinearRegression(),
                 "xgboost":XGBRegressor(),
                 "catboost":CatBoostRegressor(),
-                "kneighbours":KNeighborsRegressor()
+                "kneighbors":KNeighborsRegressor()
             }
             
-            model_report:dict=evaluate_model(x_train=X_train,y_train=y_train,x_test=X_test,y_test=y_test,models=models)
+            params={
+                "RandomForest":{
+                    "n_estimators":[25,50,100,150,200],
+                    "criterion":["squared_error", "absolute_error", "friedman_mse", "poisson"],
+                    "max_features":["sqrt", "log2", None]
+                },
+                "AdaBoost":{
+                    "n_estimators":[25,50,100,150,200],
+                    "learning_rate":[0.1,0.01,0.5,0.005],
+                    "loss":["linear", "square", "exponential"]
+                    
+                },
+                "GradientBoost":{
+                    "loss":["squared_error", "absolute_error", "huber", "quantile"],
+                    "learning_rate":[0.1,0.01,0.5,0.005],
+                    "n_estimators":[25,50,100,150,200],
+                    "criterion":["friedman_mse", "squared_error"]
+                },
+                "DecisionTree":{
+                    'criterion':['squared_error', 'friedman_mse', 'absolute_error', 'poisson'],
+                    'splitter':['best', 'random'],
+                    "max_features":["sqrt", "log2", None]
+                    
+                },
+                "LinearRegression":{
+                    'n_jobs':[-1]
+                },
+                
+                "xgboost":{
+                    "learning_rate":[0.1,0.01,0.5,0.005],
+                    "n_estimators":[25,50,100,150,200]
+                },
+                "catboost":{
+                    'depth':[6,8,10],
+                    'learning_rate':[0.1,0.01,0.5,0.005],
+                    'iterations':[30,50,100]
+                },
+                "kneighbors":{
+                    'weights':['uniform', 'distance'],
+                    'algorithm':['auto', 'ball_tree', 'kd_tree', 'brute'],
+                    'n_neighbors':[5,7,9,11]
+                }
+            }
+            
+            model_report:dict=evaluate_model(x_train=X_train,y_train=y_train,x_test=X_test,y_test=y_test,models=models,params=params)
             
             ## to get best_model_score
             best_model_score=max(model_report.values())
